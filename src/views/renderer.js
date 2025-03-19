@@ -3,7 +3,7 @@
  */
 
 console.log("Processo de renderização")
-// inserção da data no rodapé
+// Inserção da data no rodapé
 function obterData() {
     const data = new Date()
     const options = {
@@ -16,3 +16,15 @@ function obterData() {
 }
 
 document.getElementById('dataAtual').innerHTML = obterData()
+
+// Troca o ícone do banco de dados (status da conexão)
+// Uso da api do preload.js
+api.dbStatus((event, message) => {
+    // Teste de recebimento da mensagem
+    console.log(message)
+    if (message === "conectado") {
+        document.getElementById('iconeDB').src = "../public/img/dbon.png"
+    } else {
+        document.getElementById('iconeDB').src = "../public/img/dboff.png"
+    }
+})

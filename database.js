@@ -9,8 +9,7 @@ const mongoose = require('mongoose')
 // configuração do banco de dados
 // ip/link do servidor, autenticação, nome do banco
 // ao final da url, definir o nome do banco de dados
-// exemplo: /dbclientes
-const url = ''
+const url = 'mongodb+srv://admin:123Senac@cluster01.kxl89.mongodb.net/dbnote'
 
 // validação (evitar a abertura de várias conexões)
 let conectado = false
@@ -25,12 +24,7 @@ const conectar = async () => {
             conectado = true // setar a variável
             console.log("MongoDB Connect")
         } catch (error) {
-            // tratamento de exceções específicas
-            if (error.code = 110000) {
-                console.log(`Erro: O CPF ${cpfCli} já está cadastrado`)
-            } else {
-                console.error(error)
-            }
+            console.error(error)
         }
     }
 }
