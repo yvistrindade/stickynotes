@@ -15,6 +15,9 @@ const path = require('node:path')
 // importação dos metodos conectar a desconectar (modulo de conexão)
 const { conectar, desconectar } = require('./database.js')
 
+// Importação do modelo de dados (Notes.js)
+const noteModel = require('./src/models/Notes.js')
+
 // janela principal
 let win
 const createWindow = () => {
@@ -34,7 +37,7 @@ const createWindow = () => {
     }
   })
 
-  // carregar o menu personalizado
+  // Carregar o menu personalizado
   // ATENÇÃO: Antes importar o recurso Menu
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
@@ -42,27 +45,64 @@ const createWindow = () => {
   win.loadFile('./src/views/index.html')
 }
 
-// janela sobre
+// Janela sobre
 let about
 function aboutWindow() {
+  nativeTheme.themeSource = 'light'
+  // Obter a janela principal
+  const mainWindow = BrowserWindow.getFocusedWindow()
+  // Validação (se existir a janela principal)
+  if (mainWindow) {
+    about = new BrowserWindow({
+      width: 320,
+      height: 280,
+      //autoHideMenuBar: true,
+      //resizable: false,
+      //minimizable: false,
+      // estabelecer uma relação hierárquica entre janelas
+      parent: mainWindow,
+      // criar uma janela modal (só retorna a principal quando encerrada)
+      modal: true,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
+    })
+  }
+  about.loadFile('./src/views/sobre.html')
+
+  //recebimento da mensagem do renderizador da tela sobre para fechar a janela usando o botão 0K
+  ipcMain.on('about-exit', () => {
+    //validação (se existir a janela e ela não estiver destruida, fechar)
+    if (about && !about.isDestroyed()) {
+      about.close()
+    }
+  })
+}
+
+// Janela nota
+let note
+function noteWindow() {
   nativeTheme.themeSource = 'light'
   // obter a janela principal
   const mainWindow = BrowserWindow.getFocusedWindow()
   // validação (se existir a janela principal)
   if (mainWindow) {
-    about = new BrowserWindow({
-      width: 320,
-      height: 280,
+    note = new BrowserWindow({
+      width: 400,
+      height: 270,
       autoHideMenuBar: true,
-      resizable: false,
-      minimizable: false,
+      //resizable: false,
+      //minimizable: false,
       // estabelecer uma relação hierárquica entre janelas
       parent: mainWindow,
       // criar uma janela modal (só retorna a principal quando encerrada)
-      modal: true
+      modal: true,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
     })
   }
-  about.loadFile('./src/views/sobre.html')
+  note.loadFile('./src/views/nota.html')
 }
 
 // Inicialização da aplicação (assincronismo)
@@ -73,14 +113,16 @@ app.whenReady().then(() => {
   // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e encerrar a conexão quando o aplicação for finalizar
   // Só ativar a janela principal se nenhuma outra estiver ativa
   ipcMain.on('db-connect', async (event) => {
-    // A linha abaixo estabelece conexão ao banco de dados
-    await conectar()
-    // Enviar ao renderizador uma mensagem para trocar a imagem do ícone do banco de dados (criar um delay de 0.5 ou 1s para sincronização com a nuvem)
-    setTimeout(() => {
-      // Enviar ao renderizador a mensagem "conectado"
-      // db-status (IPC - comunicação entre processos - preload.js)
-      event.reply('db-status', "conectado")
-    }, 500) // 500 = 0.5s
+    // A linha abaixo estabelece conexão com o banco de dados e verifica se foi conectado com sucesso (return true).
+    const conectado = await conectar()
+    if (conectado) {
+      // Enviar ao renderizador uma mensagem para trocar a imagem do ícone do banco de dados (criar um delay de 0.5 ou 1s para sincronização com a nuvem)
+      setTimeout(() => {
+        // Enviar ao renderizador a mensagem "conectado"
+        // db-status (IPC - comunicação entre processos - preload.js)
+        event.reply('db-status', "conectado")
+      }, 500) // 500 = 0.5s 
+    }
   })
 
   // Só ativa a janela principal se nenhuma outra estiver ativa
@@ -114,6 +156,7 @@ const template = [
       {
         label: 'Criar nota',
         accelerator: 'Ctrl+N',
+        click: () => noteWindow()
       },
       {
         type: 'separator'
@@ -167,3 +210,23 @@ const template = [
     ]
   }
 ]
+
+// ===================================================
+// == CRUD Create ====================================
+
+// Recebimento do objeto que contém os dados da nota
+ipcMain.on('create-note', async (event, stickyNote) => {
+  // IMPORTANTE! Teste de recebimento do objeto - Passo 2
+  console.log(stickyNote)
+  // Criar uma nova estrutura de dados para salvar no banco
+  // ATENÇÃO!!! Os atributos da estrutura precisam ser idênticos ao modelo e os valores são obtidos através do objeto stickynote
+  const newNote = noteModel({
+    texto: stickyNote.textNote,
+    cor: stickyNote.colorNote
+  })
+  // Salvar a nota no banco de dados (Passo 3: fluxo)
+  newNote.save()
+})
+
+// == Fim - CRUD Create ==============================
+// ===================================================

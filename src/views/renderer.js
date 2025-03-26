@@ -1,8 +1,8 @@
 /**
- * Processo de renderização do documento index.html
+ *  Processo de renderização do documento index.html
  */
-
 console.log("Processo de renderização")
+
 // Inserção da data no rodapé
 function obterData() {
     const data = new Date()
@@ -17,7 +17,7 @@ function obterData() {
 
 document.getElementById('dataAtual').innerHTML = obterData()
 
-// Troca o ícone do banco de dados (status da conexão)
+// Trocar do icone do banco de dados (status de conexão)
 // Uso da api do preload.js
 api.dbStatus((event, message) => {
     // Teste de recebimento da mensagem

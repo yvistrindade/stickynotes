@@ -1,7 +1,7 @@
 {
   "name": "stickynotes",
   "version": "1.0.0",
-  "description": "Projeto de notas auto adesivas (estilo post-it) usando framework Electron e o banco de dados MONGODB",
+  "description": "Projeto de notas autoadesivas (estilo post-it) usando o framework Electron e o banco de dados MongoDBProjeto de notas autoadesivas (estilo post-it) usando o framework Electron e o banco de dados MongoDB",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,18 +9,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yvistrindade/stickynotes.git"
+    "url": "git+https://github.com/clxsilva/stickynotes.git"
   },
-  "author": "Yvis trindade",
+  "author": "Claudio Silva",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yvistrindade/stickynotes/issues"
+    "url": "https://github.com/clxsilva/stickynotes/issues"
   },
-  "homepage": "https://github.com/yvistrindade/stickynotes#readme",
+  "homepage": "https://github.com/clxsilva/stickynotes#readme",
   "devDependencies": {
     "electron": "^34.3.0"
   },
   "dependencies": {
-    "mongoose": "^8.12.1"
+    "mongoose": "^8.13.0"
   }
 }
