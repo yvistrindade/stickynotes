@@ -3,12 +3,10 @@
  * Criação da coleção
  */
 
-const { version } = require('mongoose')
-
-// Importação dos recursos do mongoose
+// importação do recursos do mongoose
 const { model, Schema } = require('mongoose')
 
-// Criação da estrutura da correção
+// criação da estrutura da coleção
 const noteSchema = new Schema({
     texto: {
         type: String
@@ -16,7 +14,7 @@ const noteSchema = new Schema({
     cor: {
         type: String
     }
-}, {versionKey: false})
+}, { versionKey: false })
 
-// Exportar o modelo de dados para o main
+// exportar o modelo de dados para o main
 module.exports = model('Notas', noteSchema)

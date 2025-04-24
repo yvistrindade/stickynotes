@@ -1,5 +1,5 @@
 console.log("Electron - Processo principal")
-
+ 
 // importação dos recursos do framework
 // app (aplicação)
 // BrowserWindow (criação da janela)
@@ -8,16 +8,16 @@ console.log("Electron - Processo principal")
 // shell (acessar links externos no navegador padrão)
 // ipcMain (permite estabelecer uma comunicação entre processos (IPC) main.js <=> renderer.js)
 const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain } = require('electron/main')
-
+ 
 // ativação do preload.js (importação do path)
 const path = require('node:path')
-
+ 
 // importação dos metodos conectar a desconectar (modulo de conexão)
 const { conectar, desconectar } = require('./database.js')
-
+ 
 // Importação do modelo de dados (Notes.js)
 const noteModel = require('./src/models/Notes.js')
-
+ 
 // janela principal
 let win
 const createWindow = () => {
@@ -36,15 +36,15 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-
+ 
   // Carregar o menu personalizado
   // ATENÇÃO: Antes importar o recurso Menu
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
-
+ 
   // carregar o documento html na janela
   win.loadFile('./src/views/index.html')
 }
-
+ 
 // Janela sobre
 let about
 function aboutWindow() {
@@ -69,7 +69,7 @@ function aboutWindow() {
     })
   }
   about.loadFile('./src/views/sobre.html')
-
+ 
   //recebimento da mensagem do renderizador da tela sobre para fechar a janela usando o botão 0K
   ipcMain.on('about-exit', () => {
     //validação (se existir a janela e ela não estiver destruida, fechar)
@@ -78,7 +78,7 @@ function aboutWindow() {
     }
   })
 }
-
+ 
 // Janela nota
 let note
 function noteWindow() {
@@ -104,11 +104,11 @@ function noteWindow() {
   }
   note.loadFile('./src/views/nota.html')
 }
-
+ 
 // Inicialização da aplicação (assincronismo)
 app.whenReady().then(() => {
   createWindow()
-
+ 
   // Melhor local para estabelecer a conexão com o banco de dados
   // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e encerrar a conexão quando o aplicação for finalizar
   // Só ativar a janela principal se nenhuma outra estiver ativa
@@ -121,10 +121,10 @@ app.whenReady().then(() => {
         // Enviar ao renderizador a mensagem "conectado"
         // db-status (IPC - comunicação entre processos - preload.js)
         event.reply('db-status', "conectado")
-      }, 500) // 500 = 0.5s 
+      }, 500) // 500 = 0.5s
     }
   })
-
+ 
   // Só ativa a janela principal se nenhuma outra estiver ativa
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -132,22 +132,22 @@ app.whenReady().then(() => {
     }
   })
 })
-
+ 
 // Se o sistema MAC não encerrar a aplicação quando a janela for fechada
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
+ 
 // IMPORTANTE! Desconectar do banco de dados quando a aplicação for finalizada
 app.on('before-quit', async () => {
   await desconectar()
 })
-
+ 
 // Reduzir a verbozidade de logs não críticos (devtools)
 app.commandLine.appendSwitch('log-level', '3')
-
+ 
 // Template do menu
 const template = [
   {
@@ -210,25 +210,52 @@ const template = [
     ]
   }
 ]
-
+ 
 // ===================================================
 // == CRUD Create ====================================
-
+ 
 // Recebimento do objeto que contém os dados da nota
 ipcMain.on('create-note', async (event, stickyNote) => {
   // IMPORTANTE! Teste de recebimento do objeto - Passo 2
   console.log(stickyNote)
-  // Criar uma nova estrutura de dados para salvar no banco
-  // ATENÇÃO!!! Os atributos da estrutura precisam ser idênticos ao modelo e os valores são obtidos através do objeto stickynote
-  const newNote = noteModel({
-    texto: stickyNote.textNote,
-    cor: stickyNote.colorNote
-  })
-  // Salvar a nota no banco de dados (Passo 3: fluxo)
-  newNote.save()
-  //enviar ao redenrizador um pedido para limpar os campos e setar o formulario com os padroes originais (foco no texto)
-  event.reply('reset-form')
+  try {
+    // Criar uma nova estrutura de dados para salvar no banco
+    // ATENÇÃO!!! Os atributos da estrutura precisam ser idênticos ao modelo e os valores são obtidos através do objeto stickynote
+    const newNote = noteModel({
+      texto: stickyNote.textNote,
+      cor: stickyNote.colorNote
+    })
+    // Salvar a nota no banco de dados (Passo 3: fluxo)
+    newNote.save()
+    // Enviar ao renderizador um pedido para limpar os campos e setar o formulário com os padrões originais (foco no texto)
+    event.reply('reset-form')
+  } catch (error) {
+    console.log(error)
+  }
 })
-
+ 
 // == Fim - CRUD Create ==============================
+// ===================================================
+ 
+ 
+// ===================================================
+// == CRUD Read = ====================================
+ 
+// Passo 2: Receber do renderer o pedido para listar as notas e fazer a busca no banco de dados
+ipcMain.on('list-notes', async (event) => {
+  //console.log("Teste IPC [list-notes]")
+  try {
+    // Passo 3: obter do banco de dados a listagem das notas cadastradas
+    const notes = await noteModel.find()
+    console.log(notes) // teste do passo 3
+    // Passo 4: enviar ao renderer a listagem das notas
+    // obs: IPC (string) | banco (JSON) (é necessário uma conversão usando JSON.stringfy())
+    // event.reply() resposta a solicitação (específica do solicitante)
+    event.reply('render-notes', JSON.stringify(notes))
+  } catch (error) {
+    console.log(error)
+  }
+})
+ 
+// == Fim - CRUD Read = ==============================
 // ===================================================

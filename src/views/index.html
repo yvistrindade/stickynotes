@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
+ 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,22 +13,24 @@
     <!-- Título da janela -->
     <title>Sticky Notes</title>
 </head>
-
+ 
 <body>
     <div class="container">
-
+        <!-- renderizar as notas (li será gerado de forma dinâmica pelo JS de acordo com o número de notas) -->
+         <ul id="listNotes"></ul>
     </div>
-
+ 
     <footer>
         <p id="dataAtual"></p>
         <img src="../public/img/dboff.png" alt="ícone banco de dados" id="iconeDB">
     </footer>
-
+ 
     <!-- Bootstrap -->
     <script src="../public/js/bootstrap.min.js"></script>
-
+ 
     <!-- Processo de renderização -->
     <script src="renderer.js"></script>
 </body>
-
+ 
 </html>
+ 
