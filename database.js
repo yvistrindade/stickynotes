@@ -1,16 +1,7 @@
-/**
- * Módulo de conexão com o banco de dados
- * Uso do framework mongoose
- */
-
-// importação do mongoose
 const mongoose = require('mongoose')
-
-// configuração do banco de dados
-// ip/link do servidor, autenticação, nome do banco
-// ao final da url, definir o nome do banco de dados
 const url = 'mongodb+srv://admin:123Senac@cluster01.kxl89.mongodb.net/dbnote'
 
+<<<<<<< HEAD
 // validação (evitar a abertura de várias conexões)
 let connected = false
 
@@ -23,6 +14,15 @@ const connectDB = async () => {
             await mongoose.connect(url) // conectar
             connected = true // setar a variável
             console.log("MongoDB Connect")
+=======
+let connected = false
+
+const connectDB = async () => {
+    if (!connected) {
+        try {
+            await mongoose.connect(url)
+            connected = true 
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
             return true
         } catch (error) {
             console.error(error)
@@ -31,6 +31,7 @@ const connectDB = async () => {
     }
 }
 
+<<<<<<< HEAD
 // método para desconectar com o banco de dados
 const disconnectDB = async () => {
     // se estiver conectado
@@ -40,6 +41,13 @@ const disconnectDB = async () => {
             await mongoose.disconnect(url) // desconectar
             connected = false // setar a variável
             console.log("MongoDB Desconnect")
+=======
+const disconnectDB = async () => {
+    if (connected) {
+        try {
+            await mongoose.disconnect(url) 
+            connected = false 
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
             return true
         } catch (error) {
             console.error(error)
@@ -48,5 +56,8 @@ const disconnectDB = async () => {
     }
 }
 
+<<<<<<< HEAD
 // exportar para o main os métodos conectar e desconectar
+=======
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
 module.exports = { connectDB, disconnectDB }

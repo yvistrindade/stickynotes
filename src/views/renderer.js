@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Processo de renderização do documento index.html
  */
@@ -14,6 +15,13 @@ let arrayNotes = []
 const list = document.getElementById('listNotes')
 
 // inserção da data no rodapé
+=======
+
+let arrayNotes = []
+
+const list = document.getElementById('listNotes')
+
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
 function getDate() {
     const date = new Date()
     const options = {
@@ -27,11 +35,15 @@ function getDate() {
 
 document.getElementById('currentdate').innerHTML = getDate()
 
+<<<<<<< HEAD
 // Troca do ícone do banco de dados (status da conexão)
 // uso da api do preload.js
 api.dbStatus((event, message) => {
     //teste de recebimento da mensagem
     console.log(message)
+=======
+api.dbStatus((event, message) => {
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
     if (message === "conectado") {
         document.getElementById('iconDB').src = "../public/img/dbon.png"
     } else {
@@ -39,6 +51,7 @@ api.dbStatus((event, message) => {
     }
 })
 
+<<<<<<< HEAD
 // enviar ao main um pedido para conectar com o banco de dados quando a janela principal for inicializada
 api.dbConnect()
 
@@ -59,6 +72,15 @@ api.renderNotes((event, notes) => {
     arrayNotes.forEach((n) => {
         // adicionar de tgas <li> no documento index.html
         // var(--${n.cor}) aplica a cor definida nas variaveis CSS. Atenção! É necessário usar o  mesmo nome armazenado no banco das variaveis no CSS
+=======
+api.dbConnect()
+api.listNotes()
+api.renderNotes((event, notes) => {
+    const renderNotes = JSON.parse(notes)
+    arrayNotes = renderNotes
+    arrayNotes.forEach((n) => {
+
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
         list.innerHTML += `
         <li class = "card" style="background-color:var(--${n.cor});">
             <p onclick = "deleteNote('${n._id}')" id ="x">X</p>
@@ -71,17 +93,21 @@ api.renderNotes((event, notes) => {
 })
  
 
+<<<<<<< HEAD
 // == Fim - CRUD Read ==========================================
 // =============================================================
 
 
 // =============================================================
 // Atualização das notas =======================================
+=======
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
 
 api.mainReload((args) => {
     location.reload()
 })
 
+<<<<<<< HEAD
 // Fim - atualização das notas =================================
 // =============================================================
 
@@ -96,3 +122,8 @@ function deleteNote(id) {
 
 //== Fim - CRUD Delete =========================================
 // =============================================================
+=======
+function deleteNote(id) {
+    api.deleteNote(id)
+}
+>>>>>>> b7d79323e04ad183ca2cde4fb4e0f7b058fab6f3
