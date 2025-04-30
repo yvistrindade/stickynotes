@@ -1,154 +1,106 @@
-console.log("Electron - Processo principal")
- 
-// importação dos recursos do framework
-// app (aplicação)
-// BrowserWindow (criação da janela)
-// nativeTheme está relacionado ao tema (claro ou escuro)
-// Menu (definir um menu personalizado)
-// shell (acessar links externos no navegador padrão)
-// ipcMain (permite estabelecer uma comunicação entre processos (IPC) main.js <=> renderer.js)
-const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain } = require('electron/main')
- 
-// ativação do preload.js (importação do path)
+const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain, dialog } = require('electron/main')
+
 const path = require('node:path')
- 
-// importação dos metodos conectar a desconectar (modulo de conexão)
-const { conectar, desconectar } = require('./database.js')
- 
-// Importação do modelo de dados (Notes.js)
+const { connectDB, disconnectDB } = require('./database.js')
 const noteModel = require('./src/models/Notes.js')
- 
-// janela principal
 let win
+
 const createWindow = () => {
-  // definindo o tema da janela claro ou escuro
   nativeTheme.themeSource = 'light'
   win = new BrowserWindow({
     width: 1010,
     height: 720,
-    //frame: false, // totem de pedido
-    //resizable: false, // retira o redimensionamento
-    //minimizable: false, // retira a opção de minimizar
-    //closable: false, // retira a opção close
-    //autoHideMenuBar: true // esconder o menu
-    // movable: false
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
- 
-  // Carregar o menu personalizado
-  // ATENÇÃO: Antes importar o recurso Menu
+
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
- 
-  // carregar o documento html na janela
+
   win.loadFile('./src/views/index.html')
 }
- 
-// Janela sobre
 let about
 function aboutWindow() {
   nativeTheme.themeSource = 'light'
-  // Obter a janela principal
+
   const mainWindow = BrowserWindow.getFocusedWindow()
-  // Validação (se existir a janela principal)
   if (mainWindow) {
     about = new BrowserWindow({
-      width: 320,
-      height: 280,
-      //autoHideMenuBar: true,
-      //resizable: false,
-      //minimizable: false,
-      // estabelecer uma relação hierárquica entre janelas
+      width: 300,
+      height: 200,
+      autoHideMenuBar: true,
+      resizable: false,
+      minimizable: false,
       parent: mainWindow,
-      // criar uma janela modal (só retorna a principal quando encerrada)
       modal: true,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }
     })
   }
+
   about.loadFile('./src/views/sobre.html')
- 
-  //recebimento da mensagem do renderizador da tela sobre para fechar a janela usando o botão 0K
   ipcMain.on('about-exit', () => {
-    //validação (se existir a janela e ela não estiver destruida, fechar)
     if (about && !about.isDestroyed()) {
       about.close()
     }
   })
 }
- 
-// Janela nota
+
 let note
 function noteWindow() {
   nativeTheme.themeSource = 'light'
-  // obter a janela principal
   const mainWindow = BrowserWindow.getFocusedWindow()
-  // validação (se existir a janela principal)
   if (mainWindow) {
     note = new BrowserWindow({
       width: 400,
       height: 270,
       autoHideMenuBar: true,
-      //resizable: false,
-      //minimizable: false,
-      // estabelecer uma relação hierárquica entre janelas
+      resizable: false,
+      minimizable: false,
       parent: mainWindow,
-      // criar uma janela modal (só retorna a principal quando encerrada)
       modal: true,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }
     })
   }
+
   note.loadFile('./src/views/nota.html')
 }
- 
-// Inicialização da aplicação (assincronismo)
+
 app.whenReady().then(() => {
   createWindow()
- 
-  // Melhor local para estabelecer a conexão com o banco de dados
-  // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e encerrar a conexão quando o aplicação for finalizar
-  // Só ativar a janela principal se nenhuma outra estiver ativa
+
   ipcMain.on('db-connect', async (event) => {
-    // A linha abaixo estabelece conexão com o banco de dados e verifica se foi conectado com sucesso (return true).
-    const conectado = await conectar()
-    if (conectado) {
-      // Enviar ao renderizador uma mensagem para trocar a imagem do ícone do banco de dados (criar um delay de 0.5 ou 1s para sincronização com a nuvem)
+   
+    const connected = await connectDB()
+    if (connected) {
       setTimeout(() => {
-        // Enviar ao renderizador a mensagem "conectado"
-        // db-status (IPC - comunicação entre processos - preload.js)
         event.reply('db-status', "conectado")
-      }, 500) // 500 = 0.5s
+      }, 200) 
     }
   })
- 
-  // Só ativa a janela principal se nenhuma outra estiver ativa
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
   })
 })
- 
-// Se o sistema MAC não encerrar a aplicação quando a janela for fechada
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
- 
-// IMPORTANTE! Desconectar do banco de dados quando a aplicação for finalizada
+
 app.on('before-quit', async () => {
-  await desconectar()
+  await disconnectDB()
 })
- 
-// Reduzir a verbozidade de logs não críticos (devtools)
+
 app.commandLine.appendSwitch('log-level', '3')
- 
-// Template do menu
+
 const template = [
   {
     label: 'Notas',
@@ -176,19 +128,19 @@ const template = [
         role: 'zoomIn'
       },
       {
-        label: 'Reduzir zoom',
+        label: 'Reduzir',
         role: 'zoomOut'
       },
       {
-        label: 'Restaurar zoom padrão',
+        label: 'Restaurar o zoom padrão',
         role: 'resetZoom'
       },
       {
         type: 'separator'
       },
       {
-        label: "Recarregar",
-        role: "reload"
+        label: 'Recarregar',
+        click: () => updateList()
       },
       {
         label: 'DevTools',
@@ -201,7 +153,7 @@ const template = [
     submenu: [
       {
         label: 'Repositório',
-        click: () => shell.openExternal('https://github.com/clxsilva/stickynotes')
+        click: () => shell.openExternal('https://github.com/professorjosedeassis/stickynotes')
       },
       {
         label: 'Sobre',
@@ -210,52 +162,55 @@ const template = [
     ]
   }
 ]
- 
-// ===================================================
-// == CRUD Create ====================================
- 
-// Recebimento do objeto que contém os dados da nota
+
 ipcMain.on('create-note', async (event, stickyNote) => {
-  // IMPORTANTE! Teste de recebimento do objeto - Passo 2
-  console.log(stickyNote)
   try {
-    // Criar uma nova estrutura de dados para salvar no banco
-    // ATENÇÃO!!! Os atributos da estrutura precisam ser idênticos ao modelo e os valores são obtidos através do objeto stickynote
     const newNote = noteModel({
       texto: stickyNote.textNote,
       cor: stickyNote.colorNote
     })
-    // Salvar a nota no banco de dados (Passo 3: fluxo)
     newNote.save()
-    // Enviar ao renderizador um pedido para limpar os campos e setar o formulário com os padrões originais (foco no texto)
-    event.reply('reset-form')
   } catch (error) {
     console.log(error)
   }
 })
- 
-// == Fim - CRUD Create ==============================
-// ===================================================
- 
- 
-// ===================================================
-// == CRUD Read = ====================================
- 
-// Passo 2: Receber do renderer o pedido para listar as notas e fazer a busca no banco de dados
+
 ipcMain.on('list-notes', async (event) => {
-  //console.log("Teste IPC [list-notes]")
   try {
-    // Passo 3: obter do banco de dados a listagem das notas cadastradas
     const notes = await noteModel.find()
-    console.log(notes) // teste do passo 3
-    // Passo 4: enviar ao renderer a listagem das notas
-    // obs: IPC (string) | banco (JSON) (é necessário uma conversão usando JSON.stringfy())
-    // event.reply() resposta a solicitação (específica do solicitante)
     event.reply('render-notes', JSON.stringify(notes))
   } catch (error) {
     console.log(error)
   }
 })
- 
-// == Fim - CRUD Read = ==============================
-// ===================================================
+
+ipcMain.on('update-list', () => {
+  updateList()
+})
+
+function updateList() {
+  if (win && !win.isDestroyed()) {
+    win.webContents.send('main-reload')
+    setTimeout(() => {
+      win.webContents.send('db-status', "conectado")
+    }, 200) 
+  }
+}
+
+ipcMain.on('delete-note', async (event, id) => {
+  const result = await dialog.showMessageBox(win, {
+    type: 'warning',
+    title: "Atenção!",
+    message: "Tem certeza que deseja excluir esta nota?\nEsta ação não poderá ser desfeita.",
+    buttons: ['Cancelar', 'Excluir'] 
+  })
+  if (result.response === 1) {
+    try {
+      const deleteNote = await noteModel.findByIdAndDelete(id)
+      updateList()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+})
+// =================================================
