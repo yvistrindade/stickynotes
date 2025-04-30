@@ -153,7 +153,7 @@ const template = [
     submenu: [
       {
         label: 'Repositório',
-        click: () => shell.openExternal('https://github.com/professorjosedeassis/stickynotes')
+        click: () => shell.openExternal('https://github.com/yvistrindade/stickynotes')
       },
       {
         label: 'Sobre',
