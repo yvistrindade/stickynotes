@@ -8,36 +8,36 @@ Fredoka is a variable font with these axes:
   wght
 
 This means all the styles are contained in a single file:
-  Fredoka/Fredoka-VariableFont_wdth,wght.ttf
+  Fredoka-VariableFont_wdth,wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Fredoka:
-  Fredoka/static/Fredoka_Condensed-Light.ttf
-  Fredoka/static/Fredoka_Condensed-Regular.ttf
-  Fredoka/static/Fredoka_Condensed-Medium.ttf
-  Fredoka/static/Fredoka_Condensed-SemiBold.ttf
-  Fredoka/static/Fredoka_Condensed-Bold.ttf
-  Fredoka/static/Fredoka_SemiCondensed-Light.ttf
-  Fredoka/static/Fredoka_SemiCondensed-Regular.ttf
-  Fredoka/static/Fredoka_SemiCondensed-Medium.ttf
-  Fredoka/static/Fredoka_SemiCondensed-SemiBold.ttf
-  Fredoka/static/Fredoka_SemiCondensed-Bold.ttf
-  Fredoka/static/Fredoka-Light.ttf
-  Fredoka/static/Fredoka-Regular.ttf
-  Fredoka/static/Fredoka-Medium.ttf
-  Fredoka/static/Fredoka-SemiBold.ttf
-  Fredoka/static/Fredoka-Bold.ttf
-  Fredoka/static/Fredoka_SemiExpanded-Light.ttf
-  Fredoka/static/Fredoka_SemiExpanded-Regular.ttf
-  Fredoka/static/Fredoka_SemiExpanded-Medium.ttf
-  Fredoka/static/Fredoka_SemiExpanded-SemiBold.ttf
-  Fredoka/static/Fredoka_SemiExpanded-Bold.ttf
-  Fredoka/static/Fredoka_Expanded-Light.ttf
-  Fredoka/static/Fredoka_Expanded-Regular.ttf
-  Fredoka/static/Fredoka_Expanded-Medium.ttf
-  Fredoka/static/Fredoka_Expanded-SemiBold.ttf
-  Fredoka/static/Fredoka_Expanded-Bold.ttf
+  static/Fredoka_Condensed-Light.ttf
+  static/Fredoka_Condensed-Regular.ttf
+  static/Fredoka_Condensed-Medium.ttf
+  static/Fredoka_Condensed-SemiBold.ttf
+  static/Fredoka_Condensed-Bold.ttf
+  static/Fredoka_SemiCondensed-Light.ttf
+  static/Fredoka_SemiCondensed-Regular.ttf
+  static/Fredoka_SemiCondensed-Medium.ttf
+  static/Fredoka_SemiCondensed-SemiBold.ttf
+  static/Fredoka_SemiCondensed-Bold.ttf
+  static/Fredoka-Light.ttf
+  static/Fredoka-Regular.ttf
+  static/Fredoka-Medium.ttf
+  static/Fredoka-SemiBold.ttf
+  static/Fredoka-Bold.ttf
+  static/Fredoka_SemiExpanded-Light.ttf
+  static/Fredoka_SemiExpanded-Regular.ttf
+  static/Fredoka_SemiExpanded-Medium.ttf
+  static/Fredoka_SemiExpanded-SemiBold.ttf
+  static/Fredoka_SemiExpanded-Bold.ttf
+  static/Fredoka_Expanded-Light.ttf
+  static/Fredoka_Expanded-Regular.ttf
+  static/Fredoka_Expanded-Medium.ttf
+  static/Fredoka_Expanded-SemiBold.ttf
+  static/Fredoka_Expanded-Bold.ttf
 
 Get started
 -----------

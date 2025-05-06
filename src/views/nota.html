@@ -4,29 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Impedir-->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+    <!--Titulo da Janela-->
     <title>Sticky Notes</title>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+    <!-- CSS Personalizado ATENÇÃO!!! sempre apos o CSS do Bootstrap-->
     <link rel="stylesheet" href="../public/css/style.css">
 </head>
 
 <body>
     <div class="container">
         <section class="novaNota">
-            <h1>Nova nota</h1>
+            <h1>Nova Nota</h1>
             <form id="frmNote">
-                <input type="text" placeholder="Escreva sua nota..." required id="inputNote" maxlength="60">
-                <h2>Escolha a cor</h2>
+                <input type="text" placeholder="Escreva sua nota...." required id="inputNote" maxlength="60">
+                <h2>Escolha uma cor</h2>
                 <select id="selectColor">
                     <option value="amarelo">Amarelo</option>
                     <option value="azul">Azul</option>
                     <option value="verde">Verde</option>
                     <option value="rosa">Rosa</option>
-                    <option value="laranja">laranja</option>
+                    <option value="laranja">Laranja</option>
                 </select>
                 <button type="submit">Salvar</button>
             </form>
         </section>
     </div>
+
+    <!--Boodstrap-->
+    <!--<script src="../public/js/bootstrap.min.js"></script>-->
+
+    <!--Processo de Renderização-->
     <script src="rendererNota.js"></script>
 </body>
 

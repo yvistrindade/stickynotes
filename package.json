@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/clxsilva/stickynotes.git"
+    "url": "git+https://github.com/yvistrindade/stickynotes.git"
   },
   "author": "Claudio Silva",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/clxsilva/stickynotes/issues"
+    "url": "https://github.com/yvistrindade/stickynotes/issues"
   },
-  "homepage": "https://github.com/clxsilva/stickynotes#readme",
+  "homepage": "https://github.com/yvistrindade/stickynotes#readme",
   "devDependencies": {
     "electron": "^34.3.0"
   },
